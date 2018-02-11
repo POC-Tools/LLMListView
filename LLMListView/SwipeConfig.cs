@@ -66,6 +66,7 @@ namespace LLM
 
         public bool EnableSwipeLeft { get; set; }
 
+        public bool KeepItemOpenAfterSwipe { get; set; }
 
         public double LeftRateForActualWidth => LeftSwipeLengthRate * LeftActionRateForSwipeLength;
 

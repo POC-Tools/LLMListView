@@ -268,6 +268,15 @@ namespace LLM
         public static readonly DependencyProperty RightBackAnimEasingFunctionProperty =
             DependencyProperty.Register(nameof(RightBackAnimEasingFunction), typeof(EasingFunctionBase), typeof(LLMListViewItem), new PropertyMetadata(new ExponentialEase() { EasingMode = EasingMode.EaseOut }, (s, e) => ((LLMListViewItem)s).UpdateConfig()));
 
+
+        public bool KeepItemOpenAfterSwipe
+        {
+            get { return (bool)GetValue(KeepItemOpenAfterSwipeProperty); }
+            set { SetValue(KeepItemOpenAfterSwipeProperty, value); }
+        }
+        public static readonly DependencyProperty KeepItemOpenAfterSwipeProperty =
+            DependencyProperty.Register(nameof(KeepItemOpenAfterSwipe), typeof(bool), typeof(LLMListViewItem), new PropertyMetadata(false, (s, e) => ((LLMListViewItem)s).UpdateConfig()));
+
         #endregion
 
         public LLMListViewItem()
@@ -355,6 +364,7 @@ namespace LLM
             Config.ItemActualHeight = ActualHeight;
             Config.EnableSwipeLeft = EnableSwipeLeft;
             Config.EnableSwipeRight = EnableSwipeRight;
+            Config.KeepItemOpenAfterSwipe = KeepItemOpenAfterSwipe;
         }
 
         private void LLMListViewItem_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -545,6 +555,15 @@ namespace LLM
 
             var contentCtrl = (direction == SwipeDirection.Left ? _leftSwipeContent : _rightSwipeContent) as DependencyObject;
             return Utils.FindVisualChild<T>(contentCtrl, name);
+        }
+
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            if (!KeepItemOpenAfterSwipe)
+            {
+                ResetSwipeWithAnimation();
+            }
+            base.OnLostFocus(e);
         }
     }
 }
